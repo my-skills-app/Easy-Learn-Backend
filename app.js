@@ -35,8 +35,9 @@ const connectDB = async () => {
         }
         
         await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            family: 4 // Use IPv4
         });
         console.log('MongoDB connected successfully');
     } catch (err) {
@@ -92,12 +93,27 @@ app.get('*', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000; // Changed from 4000 to 3000
 const startServer = async () => {
     try {
         await connectDB();
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
+        });
+        
+        // Handle server errors
+        server.on('error', (error) => {
+            console.error('Server error:', error);
+            if (error.code === 'EADDRINUSE') {
+                console.error(`Port ${PORT} is already in use. Trying a different port...`);
+                const alternativePort = PORT + 1;
+                console.log(`Attempting to start on port ${alternativePort}`);
+                server.close(() => {
+                    app.listen(alternativePort, () => {
+                        console.log(`Server is now running on port ${alternativePort}`);
+                    });
+                });
+            }
         });
     } catch (error) {
         console.error('Failed to start server:', error);
