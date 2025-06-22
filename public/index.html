@@ -4,12 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Management API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .api-endpoints ul {
+            list-style: none;
+            padding: 0;
+        }
+        .api-endpoints li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <div style="text-align: center; padding: 50px;">
-        <h1>Welcome to Course Management API</h1>
-        <p>This is a RESTful API for course management. Please use the API endpoints as documented in the README.</p>
-        <p>API Documentation: <a href="/api-docs">/api-docs</a></p>
+    <div class="container">
+        <h1>Course Management API</h1>
+        <p>Welcome to the Course Management API</p>
+        <div class="api-endpoints">
+            <h2>API Endpoints</h2>
+            <ul>
+                <li><a href="/api/courses">GET /api/courses</a> - Get all courses</li>
+                <li><a href="/api/auth/login">POST /api/auth/login</a> - Login</li>
+                <li><a href="/api/auth/register">POST /api/auth/register</a> - Register</li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
