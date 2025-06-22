@@ -19,31 +19,21 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Serve static files
 app.use(express.static('public'));
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Error handling for static files
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api')) {
-        next();
-    } else {
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    }
-});
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 const connectDB = async () => {
     try {
+        if (!process.env.MONGO_URI) {
+            throw new Error('MONGO_URI environment variable is not set');
+        }
+        
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -58,9 +48,56 @@ const connectDB = async () => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));
-app.use('/api/course-storage', require('./routes/courseStorageRoutes'));
-app.use('/api/admin/users', require('./routes/adminUserRoutes'));
-app.use('/api/admin/courses', require('./routes/adminCourseRoutes'));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('API Error:', {
+        code: err.code || 'INTERNAL_ERROR',
+        message: err.message,
+        stack: err.stack
+    });
+    
+    res.status(err.statusCode || 500).json({
+        status: 'error',
+        message: err.message || 'Internal server error',
+        data: null
+    });
+});
+
+// Fallback route for API
+app.use('/api/*', (req, res) => {
+    res.status(404).json({
+        status: 'error',
+        message: 'API endpoint not found',
+        data: null
+    });
+});
+
+// Default route for static files
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Start server
+const PORT = process.env.PORT || 4000;
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
+
+// Default route for static files
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
