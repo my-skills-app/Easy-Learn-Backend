@@ -1,0 +1,327 @@
+{
+    "info": {
+        "name": "Course App API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/register",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "register"]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "My Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/my-courses",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "my-courses"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Courses",
+            "item": [
+                {
+                    "name": "Create Course (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Course Title\",\n    \"description\": \"Course Description\",\n    \"price\": 199.99\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/courses",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "courses"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/courses",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "courses"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Course by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/courses/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "courses", ":id"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Batch Link (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"batchLink\": \"https://example.com/batch-link\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/courses/:id/batch-link",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "courses", ":id", "batch-link"]
+                        }
+                    }
+                },
+                {
+                    "name": "Assign Course (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"userId\": \"user123\",\n    \"courseId\": \"course123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/courses/assign",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "courses", "assign"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin User Management",
+            "item": [
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/users",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "admin", "users"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/users/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "admin", "users", ":id"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update User Role",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"role\": \"admin\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/users/:id/role",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "admin", "users", ":id", "role"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/users/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "admin", "users", ":id"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Course Storage",
+            "item": [
+                {
+                    "name": "Get All Courses (Public)",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/course-storage",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "course-storage"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Course by ID (Public)",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/course-storage/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "course-storage", ":id"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Course (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Course Title\",\n    \"description\": \"Course Description\",\n    \"price\": 199.99\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/course-storage",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "course-storage"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Course (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Updated Course Title\",\n    \"description\": \"Updated Course Description\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/course-storage/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "course-storage", ":id"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Course (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/course-storage/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "course-storage", ":id"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
