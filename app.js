@@ -49,6 +49,14 @@ const connectDB = async () => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('API Error:', {
@@ -71,6 +79,11 @@ app.use('/api/*', (req, res) => {
         message: 'API endpoint not found',
         data: null
     });
+});
+
+// Default route for static files
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Default route for static files
