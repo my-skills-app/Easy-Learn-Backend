@@ -19,6 +19,14 @@
   "env": {
     "MONGO_URI": "@MONGO_URI",
     "JWT_SECRET": "@JWT_SECRET",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "RATE_LIMIT_WINDOW": "@RATE_LIMIT_WINDOW",
+    "RATE_LIMIT_MAX": "@RATE_LIMIT_MAX"
+  },
+  "functions": {
+    "app.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
   }
 }

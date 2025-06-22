@@ -14,16 +14,16 @@ router.post('/assign', auth, assignCourse);
 // 6. Student ke assigned courses dekhna (Protected route)
 router.get('/my-courses', auth, getMyCourses);
 
-// 1. Sabhi Courses Dekhna
+// 1. Sabhi Courses Dekhna (Public)
 router.get('/', getAllCourses);
 
-// 2. Ek Course Ki Detail Dekhna
+// 2. Ek Course Ki Detail Dekhna (Public)
 router.get('/:id', getCourseById);
 
-// 4. Course Update Karna
-router.put('/:id', updateCourse);
+// 4. Course Update Karna (Admin)
+router.put('/:id', auth, updateCourse);
 
-// 5. Course Delete Karna
-router.delete('/:id', deleteCourse);
+// 5. Course Delete Karna (Admin)
+router.delete('/:id', auth, deleteCourse);
 
 module.exports = router;

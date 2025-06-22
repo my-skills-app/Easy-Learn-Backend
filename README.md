@@ -1,18 +1,21 @@
 # Course Management System Backend
 
-A production-ready RESTful API built with Node.js, Express.js, and MongoDB for managing courses and users.
+A production-ready RESTful API built with Node.js, Express.js, and MongoDB for managing courses and users. This API is designed to be deployed on Vercel with proper static file serving and API routing.
 
 ## Features
 
 - User Authentication & Authorization
 - Course Management
-- Role-based Access Control
+- Role-based Access Control (Admin/User)
 - Input Validation
 - Error Handling
 - Security Middleware
 - File Upload Support
 - Course Batch Management
 - Course Thumbnail Support
+- Vercel-compatible Deployment
+- Rate Limiting
+- API Documentation
 
 ## API Endpoints
 
@@ -202,6 +205,55 @@ A production-ready RESTful API built with Node.js, Express.js, and MongoDB for m
 - `JWT_SECRET` - JWT secret key
 - `RATE_LIMIT_WINDOW` - Rate limiting window in milliseconds
 - `RATE_LIMIT_MAX` - Maximum requests in rate limiting window
+
+## Deployment on Vercel
+
+### Prerequisites
+1. Create a Vercel account at https://vercel.com
+2. Install Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+
+### Deployment Steps
+
+1. Link your GitHub repository to Vercel
+2. Create a new project in Vercel dashboard
+3. Connect to your GitHub repository
+4. Add environment variables in Vercel dashboard:
+   - `MONGO_URI`: Your MongoDB connection string
+   - `JWT_SECRET`: Your JWT secret key
+   - `NODE_ENV`: Set to "production"
+   - `RATE_LIMIT_WINDOW`: Rate limiting window in milliseconds
+   - `RATE_LIMIT_MAX`: Maximum requests in rate limiting window
+
+### Vercel Configuration
+
+The project includes `vercel.json` with:
+- Node.js build configuration
+- API routing
+- Static file serving
+- Environment variable configuration
+
+### Accessing the API
+
+After deployment:
+- API endpoints: `https://your-project.vercel.app/api/*`
+- Static files: `https://your-project.vercel.app/*`
+
+## Project Structure
+
+```
+Course app backend/
+├── controllers/        # API controllers
+├── models/            # MongoDB models
+├── middlewares/       # Custom middleware
+├── routes/            # API routes
+├── public/            # Static files
+├── vercel.json        # Vercel configuration
+├── app.js             # Main application file
+└── package.json       # Project dependencies
+```
 
 ## Error Handling
 

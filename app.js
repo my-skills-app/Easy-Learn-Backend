@@ -44,6 +44,10 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB connection
 const connectDB = async () => {
     try {
+        if (!process.env.MONGO_URI) {
+            throw new Error('MONGO_URI environment variable is not set');
+        }
+        
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -51,6 +55,14 @@ const connectDB = async () => {
         console.log('MongoDB connected successfully');
     } catch (err) {
         console.error('MongoDB connection error:', err);
+        // Send error to Vercel
+        if (process.env.NODE_ENV === 'production') {
+            console.error('Vercel Error:', {
+                code: 'MONGODB_ERROR',
+                message: err.message,
+                stack: err.stack
+            });
+        }
         process.exit(1);
     }
 };
@@ -58,9 +70,39 @@ const connectDB = async () => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));
-app.use('/api/course-storage', require('./routes/courseStorageRoutes'));
-app.use('/api/admin/users', require('./routes/adminUserRoutes'));
-app.use('/api/admin/courses', require('./routes/adminCourseRoutes'));
+
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/courses', require('./routes/courseRoutes'));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('API Error:', {
+        code: err.code || 'INTERNAL_ERROR',
+        message: err.message,
+        stack: err.stack
+    });
+    
+    res.status(err.statusCode || 500).json({
+        status: 'error',
+        message: err.message || 'Internal server error',
+        data: null
+    });
+});
+
+// Fallback route for API
+app.use('/api/*', (req, res) => {
+    res.status(404).json({
+        status: 'error',
+        message: 'API endpoint not found',
+        data: null
+    });
+});
+
+// Default route for static files
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
