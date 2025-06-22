@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const compression = require('compression');
 const dotenv = require('dotenv');
+const path = require('path');
 
 // Load environment variables
 const result = dotenv.config();
@@ -17,6 +18,23 @@ const app = express();
 // Security middleware
 app.use(helmet());
 app.use(compression());
+
+// Serve static files
+app.use(express.static('public'));
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Error handling for static files
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+        next();
+    } else {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    }
+});
 
 // Middleware
 app.use(cors());
