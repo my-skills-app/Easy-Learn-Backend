@@ -17,8 +17,8 @@
     }
   ],
   "env": {
-    "MONGO_URI": "@MONGO_URI",
-    "JWT_SECRET": "@JWT_SECRET",
+    "MONGO_URI": "mongodb+srv://applearyan620501:ARyan620501@cluster0.kaqui2n.mongodb.net/course-app?retryWrites=true&w=majority",
+    "JWT_SECRET": "EasyLearn",
     "NODE_ENV": "production"
   }
 }
