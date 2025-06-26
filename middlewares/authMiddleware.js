@@ -25,13 +25,11 @@ const auth = async (req, res, next) => {
 
         // Set both the decoded token data and the user object
         req.user = {
-            userId: decoded.userId,
-            role: decoded.role,
+            ...decoded,
             user: user
         };
         next();
     } catch (error) {
-        console.error('Auth error:', error);
         res.status(401).json({
             status: 'error',
             message: 'Invalid token'
@@ -41,19 +39,19 @@ const auth = async (req, res, next) => {
 
 const admin = async (req, res, next) => {
     try {
-        await auth(req, res, next);
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                status: 'error',
-                message: 'Admin access required'
-            });
-        }
-        next();
+        await auth(req, res, () => {
+            if (req.user.role !== 'admin') {
+                return res.status(403).json({
+                    status: 'error',
+                    message: 'Admin access required'
+                });
+            }
+            next();
+        });
     } catch (error) {
-        console.error('Admin auth error:', error);
-        res.status(401).json({
+        res.status(403).json({
             status: 'error',
-            message: 'Authentication failed'
+            message: 'Admin access required'
         });
     }
 };

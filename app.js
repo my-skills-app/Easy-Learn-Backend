@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Load environment variables
-const result = dotenv.config();
+const result = dotenv.config({ path: path.join(__dirname, '.env') });
 if (result.error) {
     console.error('Error loading .env file:', result.error);
     process.exit(1);
@@ -35,21 +35,17 @@ const connectDB = async () => {
         }
         
         await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 5000,
+            serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
-            family: 4 // Use IPv4
+            family: 4,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            retryWrites: true,
+            w: 'majority'
         });
         console.log('MongoDB connected successfully');
     } catch (err) {
         console.error('MongoDB connection error:', err);
-        // Send error to Vercel
-        if (process.env.NODE_ENV === 'production') {
-            console.error('Vercel Error:', {
-                code: 'MONGODB_ERROR',
-                message: err.message,
-                stack: err.stack
-            });
-        }
         process.exit(1);
     }
 };
@@ -57,12 +53,8 @@ const connectDB = async () => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));
+app.use('/api/admin/users', require('./routes/adminUserRoutes'));
 
-<<<<<<< HEAD
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/courses', require('./routes/courseRoutes'));
-=======
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
@@ -70,7 +62,6 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
->>>>>>> 3f32b61431ed44887a3205759a8715e102e58bfd
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -100,8 +91,6 @@ app.use('/api/*', (req, res) => {
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-<<<<<<< HEAD
-=======
 
 // Default route for static files
 app.get('*', (req, res) => {
@@ -109,9 +98,22 @@ app.get('*', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000; // Changed from 4000 to 3000
+const PORT = process.env.PORT || 3001;
 const startServer = async () => {
     try {
+        // Check if server is already running
+        const isPortInUse = await new Promise((resolve) => {
+            const testServer = require('net').createServer().listen(PORT, () => {
+                testServer.close(() => resolve(false));
+            }).on('error', () => resolve(true));
+        });
+        
+
+        if (isPortInUse) {
+            console.error(`Port ${PORT} is already in use. Please stop any existing server instances.`);
+            process.exit(1);
+        }
+
         await connectDB();
         const server = app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
@@ -121,14 +123,8 @@ const startServer = async () => {
         server.on('error', (error) => {
             console.error('Server error:', error);
             if (error.code === 'EADDRINUSE') {
-                console.error(`Port ${PORT} is already in use. Trying a different port...`);
-                const alternativePort = PORT + 1;
-                console.log(`Attempting to start on port ${alternativePort}`);
-                server.close(() => {
-                    app.listen(alternativePort, () => {
-                        console.log(`Server is now running on port ${alternativePort}`);
-                    });
-                });
+                console.error(`Port ${PORT} is already in use. Please stop any existing server instances.`);
+                process.exit(1);
             }
         });
     } catch (error) {
@@ -143,7 +139,6 @@ startServer();
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
->>>>>>> 3f32b61431ed44887a3205759a8715e102e58bfd
 
 // Error handling middleware
 app.use((err, req, res, next) => {
