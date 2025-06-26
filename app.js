@@ -92,13 +92,8 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Default route for static files
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Start server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 const startServer = async () => {
     try {
         // Check if server is already running
@@ -107,7 +102,6 @@ const startServer = async () => {
                 testServer.close(() => resolve(false));
             }).on('error', () => resolve(true));
         });
-        
 
         if (isPortInUse) {
             console.error(`Port ${PORT} is already in use. Please stop any existing server instances.`);
@@ -115,17 +109,8 @@ const startServer = async () => {
         }
 
         await connectDB();
-        const server = app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-        
-        // Handle server errors
-        server.on('error', (error) => {
-            console.error('Server error:', error);
-            if (error.code === 'EADDRINUSE') {
-                console.error(`Port ${PORT} is already in use. Please stop any existing server instances.`);
-                process.exit(1);
-            }
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running on port ${PORT}`);
         });
     } catch (error) {
         console.error('Failed to start server:', error);
