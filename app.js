@@ -34,15 +34,35 @@ const connectDB = async () => {
             throw new Error('MONGO_URI environment variable is not set');
         }
         
-        await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 10000,
-            socketTimeoutMS: 45000,
-            family: 4,
+        // Set up MongoDB connection options
+        const mongoOptions = {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000, // Increase timeout
+            socketTimeoutMS: 45000,
+            family: 4,
             retryWrites: true,
-            w: 'majority'
-        });
+            w: 'majority',
+            keepAlive: true,
+            keepAliveInitialDelay: 300000
+        };
+
+        // Add retry logic for MongoDB connection
+        let retries = 5;
+        while (retries > 0) {
+            try {
+                await mongoose.connect(process.env.MONGO_URI, mongoOptions);
+                console.log('MongoDB connected successfully');
+                break;
+            } catch (err) {
+                console.error(`MongoDB connection attempt ${6 - retries} failed. Retrying...`);
+                retries--;
+                if (retries === 0) {
+                    throw err;
+                }
+                await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds before retrying
+            }
+        }
         console.log('MongoDB connected successfully');
     } catch (err) {
         console.error('MongoDB connection error:', err);
@@ -93,24 +113,40 @@ app.get('*', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const startServer = async () => {
     try {
-        // Check if server is already running
-        const isPortInUse = await new Promise((resolve) => {
-            const testServer = require('net').createServer().listen(PORT, () => {
-                testServer.close(() => resolve(false));
-            }).on('error', () => resolve(true));
-        });
-
-        if (isPortInUse) {
-            console.error(`Port ${PORT} is already in use. Please stop any existing server instances.`);
-            process.exit(1);
-        }
-
+        console.log(`Starting server on port ${PORT}`);
+        
+        // Initialize MongoDB connection
         await connectDB();
-        app.listen(PORT, '0.0.0.0', () => {
+        
+        // Start the server
+        const server = app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server running on port ${PORT}`);
+        });
+        
+        // Handle server errors
+        server.on('error', (error) => {
+            console.error('Server error:', error);
+            process.exit(1);
+        });
+        
+        // Graceful shutdown
+        process.on('SIGTERM', () => {
+            console.log('SIGTERM signal received: closing HTTP server');
+            server.close(() => {
+                console.log('HTTP server closed');
+                process.exit(0);
+            });
+        });
+        
+        process.on('SIGINT', () => {
+            console.log('SIGINT signal received: closing HTTP server');
+            server.close(() => {
+                console.log('HTTP server closed');
+                process.exit(0);
+            });
         });
     } catch (error) {
         console.error('Failed to start server:', error);
