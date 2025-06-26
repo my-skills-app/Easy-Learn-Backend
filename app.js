@@ -6,11 +6,11 @@ const compression = require('compression');
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Load environment variables
-const result = dotenv.config({ path: path.join(__dirname, '.env') });
-if (result.error) {
-    console.error('Error loading .env file:', result.error);
-    process.exit(1);
+// Load environment variables (optional in production)
+try {
+    dotenv.config({ path: path.join(__dirname, '.env') });
+} catch (error) {
+    console.log('No .env file found - using environment variables directly');
 }
 
 const app = express();
