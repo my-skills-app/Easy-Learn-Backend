@@ -1,18 +1,20 @@
 # Course Management System Backend
 
-A production-ready RESTful API built with Node.js, Express.js, and MongoDB for managing courses and users.
+A robust Node.js backend application built with Express.js and MongoDB, designed for managing educational courses and user interactions.
 
 ## Features
 
-- User Authentication & Authorization
-- Course Management
-- Role-based Access Control
-- Input Validation
-- Error Handling
-- Security Middleware
-- File Upload Support
-- Course Batch Management
-- Course Thumbnail Support
+- ✅ User Authentication & Authorization
+- ✅ Course Management System
+- ✅ Role-based Access Control (Admin/User)
+- ✅ Secure MongoDB Connection with Retry Logic
+- ✅ Comprehensive Error Handling
+- ✅ Security Middleware
+- ✅ File Upload Support
+- ✅ Course Batch Management
+- ✅ Course Thumbnail Support
+- ✅ Health Check Endpoint
+- ✅ Graceful Shutdown Handling
 
 ## API Endpoints
 
